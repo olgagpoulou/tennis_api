@@ -66,7 +66,8 @@ class UserView(APIView):
             raise AuthenticationFailed('Invalid token')
 
 
-        user = User.objects.filter(id=payload['id']).first()
+        user=User.objects.filter(id=payload['id']).first()
+
         serializer = UserSerializer(user)
 
         return Response(serializer.data)
