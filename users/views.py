@@ -5,14 +5,28 @@ from rest_framework.response import Response
 from .models import User
 from rest_framework.exceptions import AuthenticationFailed
 import jwt, datetime
+from rest_framework import status
 
 # Create your views here.
 class RegisterView(APIView):
     def post(self, request):
         serializer=UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        # serializer.is_valid(raise_exception=True)
+        # serializer.save()
+        # return Response(serializer.data)
+
+        # Ελέγχουμε αν τα δεδομένα είναι έγκυρα
+        if serializer.is_valid():
+            user = serializer.save()  # Δημιουργούμε τον χρήστη
+
+            # Επιστρέφουμε τα δεδομένα του χρήστη και το μήνυμα επιτυχίας
+            return Response({
+                'message': 'User created successfully!',
+                'user': serializer.data  # Επιστρέφουμε τα δεδομένα του χρήστη
+            }, status=status.HTTP_201_CREATED)  # Επιτυχία με κωδικό 201 (Created)
+
+        # Αν τα δεδομένα δεν είναι έγκυρα, επιστρέφουμε τα σφάλματα
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Create your views here.
